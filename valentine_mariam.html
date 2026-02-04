@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine ❤️ Mariam</title>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      transition: .6s;
+      overflow-y: auto;
+      /* ✅ يسمح بالسكرول */
+    }
+
+    body.pink {
+      background: linear-gradient(135deg, #ff758c, #ff7eb3)
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #1f1f1f, #3a3a3a)
+    }
+
+    body.gold {
+      background: linear-gradient(135deg, #cfa349, #f7e27c)
+    }
+
+    .card {
+      background: rgba(255, 255, 255, .95);
+      padding: 40px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, .25);
+      max-width: 370px;
+      margin: 40px 0;
+      animation: pop 1s;
+    }
+
+    body.dark .card {
+      background: rgba(20, 20, 20, .95);
+      color: white
+    }
+
+    h1 {
+      color: #ff4d6d;
+      margin-bottom: 10px
+    }
+
+    p {
+      font-size: 17px;
+      line-height: 1.9;
+      margin: 10px 0
+    }
+
+    #date {
+      font-size: 13px;
+      opacity: .7;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .signature {
+      margin-top: 12px;
+      font-size: 14px;
+      opacity: .8
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      background: #ff4d6d;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: .3s
+    }
+
+    button:hover {
+      transform: scale(1.08)
+    }
+
+    .themes button {
+      background: #ddd;
+      color: #333;
+      font-size: 14px;
+      padding: 6px 14px;
+      margin: 5px
+    }
+
+    .heart {
+      position: absolute;
+      opacity: .85;
+      animation: float 5s linear infinite;
+      pointer-events: none;
+    }
+
+    .star {
+      animation: float 5s linear infinite, sparkle 1.2s ease-in-out infinite
+    }
+
+    #finalHeart {
+      font-size: 0;
+      opacity: 0;
+      transition: 1s;
+    }
+
+    @keyframes sparkle {
+
+      0%,
+      100% {
+        opacity: .5;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.4)
+      }
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(100vh)
+      }
+
+      to {
+        transform: translateY(-10vh)
+      }
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+  </style>
+</head>
+
+<body class="pink">
+
+  <div class="card">
+    <h1>❤️ مريم ❤️</h1>
+
+    <div id="date">July 2025</div>
+
+    <div id="lines"></div>
+
+    <p id="finalHeart">❤️</p>
+
+    <div class="signature">— كيرلس</div>
+
+    <button onclick="start()">اضغطي هنا يا قلبي 🙈</button>
+
+    <div class="themes">
+      <button onclick="setTheme('pink')">Pink 💗</button>
+      <button onclick="setTheme('dark')">Dark 🌙</button>
+      <button onclick="setTheme('gold')">Gold ✨</button>
+    </div>
+  </div>
+
+  <!-- MUSIC -->
+  <audio id="bgMusic" loop
+    src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Gymnopedie_No_1.mp3"></audio>
+
+  <script>
+    let theme = "pink", started = false;
+
+    const textLines = [
+      "مريم ❤️",
+      "يمكن مش بعرف أعبّر كتير بالكلام،",
+      "بس حابب أقولك إن وجودك في حياتي فرق معايا بجد.",
+      "كل لحظة بينا فيها ضحك،",
+      "أو حتى زعل بسيط،",
+      "بتعلّمني قد إيه إنتِ قريبة من قلبي.",
+      "",
+      "في الفلانتين،",
+      "مش بس بحتفل بيكي…",
+      "أنا بحتفل بالإحساس الهادي",
+      "اللي بييجي لما أكون معاكي.",
+      "",
+      "أتمنى نفضل دايمًا سند لبعض،",
+      "ونكمل الطريق وإحنا أقوى",
+      "وأخف على بعض.",
+      "",
+      "Happy Valentine’s Day",
+      "يا أجمل حد في يومي 🌹"
+    ];
+
+    function setTheme(t) {
+      theme = t;
+      document.body.className = t;
+      // Music is now global and continuous, so we don't stop/start on theme change
+    }
+
+    function createHeart() {
+      const el = document.createElement("div");
+      if (theme === "gold") {
+        el.innerHTML = "⭐";
+        el.className = "heart star";
+        el.style.color = "#fff6c2";
+      } else {
+        el.innerHTML = "❤️";
+        el.className = "heart";
+        el.style.color = "white";
+      }
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.fontSize = (15 + Math.random() * 30) + "px";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+
+    function start() {
+      if (started) return;
+      started = true;
+
+      // Start music
+      const audio = document.getElementById("bgMusic");
+      audio.volume = 0.5;
+      audio.play().catch(e => console.error("Music play failed:", e));
+
+      setInterval(createHeart, 300);
+
+      const container = document.getElementById("lines");
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < textLines.length) {
+          const p = document.createElement("p");
+          p.innerText = textLines[i];
+          container.appendChild(p);
+          i++;
+        } else {
+          clearInterval(interval);
+          const heart = document.getElementById("finalHeart");
+          heart.style.fontSize = "40px";
+          heart.style.opacity = "1";
+        }
+      }, 700);
+    }
+
+    setTheme("pink");
+  </script>
+
+</body>
+
+</html>
