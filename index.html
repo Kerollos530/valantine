@@ -147,10 +147,126 @@
         transform: scale(1)
       }
     }
+
+    /* Login Overlay Styles */
+    #loginOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 0.8s ease-out, visibility 0.8s;
+    }
+
+    #loginOverlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 90%;
+      width: 350px;
+      animation: pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .login-card h2 {
+      color: #ff4d6d;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .password-input {
+      width: 80%;
+      padding: 12px 15px;
+      margin: 15px 0;
+      border: 2px solid #ffb3c1;
+      border-radius: 25px;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+      transition: 0.3s;
+      color: #333;
+    }
+
+    .password-input:focus {
+      border-color: #ff4d6d;
+      box-shadow: 0 0 10px rgba(255, 77, 109, 0.3);
+    }
+
+    .login-btn {
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+    }
+
+    .login-btn:hover {
+      background: #ff2a55;
+      transform: translateY(-2px);
+    }
+
+    .error-msg {
+      color: #d00000;
+      margin-top: 10px;
+      font-size: 14px;
+      min-height: 20px;
+      opacity: 0;
+      transition: 0.3s;
+    }
+
+    .error-msg.visible {
+      opacity: 1;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
+    }
   </style>
 </head>
 
 <body class="pink">
+  <!-- Login Overlay -->
+  <div id="loginOverlay">
+    <div class="login-card">
+      <h2>🔒 Enter Password</h2>
+      <p style="font-size: 14px; color: #666; margin-bottom: 15px;">To see my heart, type the magic word...</p>
+      <input type="password" id="passwordInput" class="password-input" placeholder="Password here..."
+        onkeypress="checkEnter(event)">
+      <br>
+      <button class="login-btn" onclick="checkPassword()">Unlock ❤️</button>
+      <div id="errorMsg" class="error-msg">Incorrect password 💔</div>
+    </div>
+  </div>
 
   <div class="card">
     <h1>❤️ مريم ❤️</h1>
@@ -252,6 +368,32 @@
     }
 
     setTheme("pink");
+
+    // Login Logic
+    function checkPassword() {
+      const input = document.getElementById('passwordInput');
+      const errorMsg = document.getElementById('errorMsg');
+      const overlay = document.getElementById('loginOverlay');
+
+      if (input.value === "mariam2005") {
+        overlay.classList.add('hidden');
+        // Optional: Start music immediately or wait for user interaction?
+        // Let's wait for user to click the main button as originally designed
+      } else {
+        errorMsg.classList.add('visible');
+        input.value = "";
+        input.focus();
+        setTimeout(() => {
+          errorMsg.classList.remove('visible');
+        }, 2000);
+      }
+    }
+
+    function checkEnter(event) {
+      if (event.key === "Enter") {
+        checkPassword();
+      }
+    }
   </script>
 
 </body>
