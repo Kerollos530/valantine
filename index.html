@@ -18,7 +18,6 @@
       font-family: 'Segoe UI', sans-serif;
       transition: .6s;
       overflow-y: auto;
-      /* ✅ يسمح بالسكرول */
     }
 
     body.pink {
@@ -369,6 +368,211 @@
         opacity: 0;
       }
     }
+
+    /* Envelope Styles */
+    #envelope-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 500;
+      transition: opacity 0.8s ease-out;
+      /* Fade out container */
+    }
+
+    .envelope {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      background: #ff4d6d;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transform-style: preserve-3d;
+    }
+
+    .envelope:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s;
+    }
+
+    .envelope::before {
+      /* Flap */
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 100px solid #ff758c;
+      transform-origin: top;
+      transition: transform 0.8s ease-in-out, z-index 0.8s;
+      /* Smooth open */
+      z-index: 3;
+    }
+
+    .envelope::after {
+      /* Pocket body */
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 150px solid #ff4d6d;
+      border-right: 150px solid #ff4d6d;
+      border-bottom: 100px solid #ff2a55;
+      border-top: 100px solid transparent;
+      z-index: 2;
+      border-radius: 0 0 10px 10px;
+      pointer-events: none;
+      /* Let clicks pass to card if needed */
+    }
+
+    .card-preview {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 90%;
+      background: white;
+      z-index: 1;
+      transition: transform 1s ease-in-out 0.4s;
+      /* Delay slide until flap opens */
+    }
+
+    /* Envelope Open State */
+    .envelope.open::before {
+      transform: rotateX(180deg);
+      z-index: 0;
+    }
+
+    .envelope.open .card-preview {
+      transform: translateX(-50%) translateY(-120px);
+      z-index: 4;
+    }
+
+    .corazon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      z-index: 4;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .instruction {
+      margin-top: 40px;
+      color: white;
+      font-size: 1.2rem;
+      animation: pulse-glow 2s infinite;
+      pointer-events: none;
+    }
+
+    /* Typewriter Cursor */
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background-color: #ff4d6d;
+      margin-left: 2px;
+      animation: blink 1s steps(2, start) infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Burst Particles */
+    .burst-particle {
+      position: absolute;
+      pointer-events: none;
+      width: 8px;
+      height: 8px;
+      background: #ff4d6d;
+      border-radius: 50%;
+      animation: fadeTranslate 1s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @keyframes fadeTranslate {
+      to {
+        transform: translate(var(--tx), var(--ty));
+        opacity: 0;
+      }
+    }
+
+    /* Photo Reveal */
+    .hidden-photo {
+      opacity: 0;
+      transform: scale(0.95);
+      filter: blur(10px);
+      transition: opacity 1.5s ease, transform 1.5s ease, filter 1.5s ease;
+      margin-top: 30px;
+      border: 8px solid white;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transform: rotate(-3deg);
+      max-width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+      visibility: hidden;
+    }
+
+    .hidden-photo.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) rotate(-3deg);
+      filter: blur(0);
+    }
+
+    .hidden-photo img {
+      width: 100%;
+      display: block;
+    }
+
+    .hidden-photo .caption {
+      background: white;
+      color: #555;
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      ::before,
+      ::after {
+        animation-duration: 0.01s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01s !important;
+        scroll-behavior: auto !important;
+      }
+
+      .typewriter-cursor {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -386,18 +590,36 @@
     </div>
   </div>
 
-  <div class="card">
+  <!-- Envelope Intro -->
+  <div id="envelope-container">
+    <div class="envelope" onclick="openEnvelope()">
+      <div class="front"></div>
+      <div class="card-preview"></div>
+      <div class="corazon">❤️</div>
+    </div>
+    <div class="instruction">Click to Open 💌</div>
+  </div>
+
+  <div class="card" id="mainCard" style="display: none; opacity: 0;">
     <h1>❤️ مريم ❤️</h1>
 
     <div id="date">July 2025</div>
 
     <div id="lines"></div>
 
+    <!-- Hidden Photo Reveal -->
+    <div id="photo-container" class="hidden-photo">
+      <!-- Placeholder image: User needs to update this source -->
+      <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=200&auto=format&fit=crop" alt="Us"
+        id="secretPhoto">
+      <div class="caption">Forever & Always ♾️</div>
+    </div>
+
     <p id="finalHeart">❤️</p>
 
     <div class="signature">— كيرلس</div>
 
-    <button onclick="start()">اضغطي هنا  🙈</button>
+    <!-- Removed "Start" button as opening the envelope starts it -->
 
     <div class="themes">
       <button onclick="setTheme('pink')">Pink 💗</button>
@@ -411,8 +633,12 @@
     src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Gymnopedie_No_1.mp3"></audio>
 
   <script>
-    let theme = "pink", started = false;
+    let theme = "pink";
+    let started = false;
+    let isOpening = false; // Interaction lock
+    const audio = document.getElementById("bgMusic");
 
+    // Text Content
     const textLines = [
       "مريم ❤️",
       "يمكن مش بعرف أعبّر كتير بالكلام،",
@@ -439,6 +665,118 @@
       document.body.className = t;
     }
 
+    // --- Interactive Feature 1: Open Envelope ---
+    function openEnvelope() {
+      if (isOpening) return; // Prevent double clicks
+      isOpening = true;
+      started = true;
+
+      const envelope = document.querySelector('.envelope');
+      const container = document.getElementById('envelope-container');
+      const mainCard = document.getElementById('mainCard');
+      // Audio element is already defined globally
+
+      // Animate Envelope
+      envelope.classList.add('open');
+      document.querySelector('.corazon').style.opacity = '0';
+
+      // Start Music
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log("Click interaction needed for music"));
+
+      // Transition to Card after animation
+      // Using timeout to match CSS transition exactly for smoothness
+      setTimeout(() => {
+        container.style.opacity = '0'; // Fade out container
+
+        // Wait for fade out to finish before switching display
+        setTimeout(() => {
+          container.style.display = 'none';
+          mainCard.style.display = 'block';
+
+          // Trigger reflow/animation
+          void mainCard.offsetWidth;
+          mainCard.style.opacity = '1';
+          mainCard.style.animation = 'pop 1s ease-out';
+
+          // Start Visuals Sequence
+          startHearts();
+          // Start Typewriter only after card is visible
+          typeWriterSequence();
+        }, 800);
+      }, 1000); // Wait for flap open + slide
+    }
+
+    // --- Interactive Feature 2: Async Typewriter Effect ---
+    async function typeWriterSequence() {
+      const container = document.getElementById("lines");
+
+      // Create permanent cursor
+      const cursor = document.createElement('span');
+      cursor.className = 'typewriter-cursor';
+      container.appendChild(cursor);
+
+      for (let i = 0; i < textLines.length; i++) {
+        const line = textLines[i];
+
+        // Handle empty lines (spacers)
+        if (line.trim() === "") {
+          const br = document.createElement("br");
+          container.insertBefore(br, cursor);
+          await new Promise(r => setTimeout(r, 400));
+          continue;
+        }
+
+        // Create paragraph for current line
+        const p = document.createElement("p");
+        p.setAttribute("data-line", i);
+        p.style.minHeight = "24px";
+        p.className = "animate-text";
+        p.style.display = "block"; // Changed from inline-block to block for proper spacing
+        container.insertBefore(p, cursor);
+
+        // Type characters
+        for (let char of line) {
+          p.textContent += char;
+          // Scroll to bottom
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+          // Random typing delay
+          let delay = Math.random() * 30 + 30; // 30-60ms
+
+          // Longer pause for punctuation
+          if ([',', '.', '!', '؟'].includes(char)) delay += 300;
+
+          await new Promise(r => setTimeout(r, delay));
+        }
+
+        // Line finished, pause before next
+        await new Promise(r => setTimeout(r, 400));
+      }
+
+      // Typing Complete - Remove Cursor and Show Final
+      cursor.remove();
+      showFinalElements();
+    }
+
+    function showFinalElements() {
+      // Show Final Heart
+      const heart = document.getElementById("finalHeart");
+      heart.style.fontSize = "50px";
+      heart.style.opacity = "1";
+      heart.style.animation = "pulse-glow 1.5s infinite";
+
+      // --- Interactive Feature 4: Photo Reveal ---
+      const photo = document.getElementById("photo-container");
+
+      // Slight delay for emotional pacing
+      setTimeout(() => {
+        photo.classList.add('visible');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 500);
+    }
+
+    // --- Visuals: Hearts ---
     function createHeart() {
       const el = document.createElement("div");
       if (theme === "gold") {
@@ -450,56 +788,57 @@
         el.className = "heart";
         el.style.color = "white";
       }
-
       el.style.left = Math.random() * 100 + "vw";
       const size = Math.random() * 20 + 10;
       el.style.fontSize = size + "px";
       const duration = Math.random() * 3 + 3;
-
       el.style.animation = `float ${duration}s linear infinite, sway ${duration * 0.8}s ease-in-out infinite alternate`;
-
       document.body.appendChild(el);
       setTimeout(() => el.remove(), duration * 1000);
     }
 
-    function start() {
-      if (started) return;
-      started = true;
+    function startHearts() {
+      setInterval(createHeart, 300);
+    }
 
-      const audio = document.getElementById("bgMusic");
-      audio.volume = 0.5;
-      audio.play().catch(e => console.error("Music play failed:", e));
+    // --- Interactive Feature 3: Click Bursts (Optimized) ---
+    document.addEventListener('click', (e) => {
+      // Validation: Don't burst if clicking button or envelope (visual clutter)
+      if (e.target.tagName === 'BUTTON' || e.target.closest('.envelope')) return;
 
-      setInterval(createHeart, 200);
+      createBurst(e.clientX, e.clientY);
+    });
 
-      const container = document.getElementById("lines");
-      let i = 0;
-      const interval = setInterval(() => {
-        if (i < textLines.length) {
-          const line = textLines[i];
-          if (line.trim() !== "") {
-            const p = document.createElement("p");
-            p.innerText = line;
-            p.className = "animate-text";
-            container.appendChild(p);
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-          } else {
-            const br = document.createElement("br");
-            container.appendChild(br);
-          }
-          i++;
-        } else {
-          clearInterval(interval);
-          const heart = document.getElementById("finalHeart");
-          heart.style.fontSize = "50px";
-          heart.style.opacity = "1";
-          heart.style.animation = "pulse-glow 1.5s infinite";
-        }
-      }, 900);
+    function createBurst(x, y) {
+      const particleCount = 12; // Performance limit
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'burst-particle';
+
+        // Random direction
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 80 + 30; // Distance
+        const tx = Math.cos(angle) * velocity + 'px';
+        const ty = Math.sin(angle) * velocity + 'px';
+
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.setProperty('--tx', tx);
+        particle.style.setProperty('--ty', ty);
+
+        // Random color
+        const colors = ['#ff4d6d', '#ff758c', '#ffffff', '#ffd700'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+        // Auto-cleanup on animation end (Event Driven)
+        particle.addEventListener('animationend', () => particle.remove());
+        document.body.appendChild(particle);
+      }
     }
 
     setTheme("pink");
 
+    // Login Logic
     function checkPassword() {
       const input = document.getElementById('passwordInput');
       const errorMsg = document.getElementById('errorMsg');
@@ -528,7 +867,10 @@
 
     document.addEventListener('mousemove', (e) => {
       const card = document.querySelector('.card');
-      if (!card) return;
+      if (!card || card.style.display === 'none') return;
+
+      // Reduced Motion Check
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const screenX = window.innerWidth / 2;
       const screenY = window.innerHeight / 2;
@@ -539,7 +881,6 @@
       card.style.transform = `perspective(1000px) rotateX(${globalRotateX}deg) rotateY(${globalRotateY}deg)`;
     });
   </script>
-
 </body>
 
 </html>
